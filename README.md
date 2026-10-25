@@ -1,2 +1,50 @@
 # Aminia-MA141-Firmware-
 Aminia MA141 Firmware Extracted via FTP in WebUI so it's very vulnerable.
+
+
+
+## Here is The Extracted Information
+
+# [Device Support Request] Aminia MA141 (Realtek RTL8685SB SPI-NAND) - Full Filesystem Dumped
+
+Hello OpenWrt Community,
+
+I have successfully obtained full root filesystem read/write access via an exposed factory FTP misconfiguration on the **Aminia MA141** router (Maxis Fibre stock firmware). I have completely mirrored the static physical partitions, including `/etc`, `/web`, `/lib`, `/bin`, and `/sbin`.
+
+I am making this full firmware file layout available to core developers to assist in porting OpenWrt, reverse engineering proprietary Realtek kernel blocks, or creating a Device Tree (`.dts`) layout for this board target.
+
+### 1. Hardware Architecture & Toolchain Details
+* **SoC Family:** Realtek RTL8685SB
+* **CPU Model:** MIPS interAptiv (multi) V2.0 (Dual-core / Multithreaded, MIPS32r2 ISA)
+* **Total Memory Map:** 76,044 KB (~80 MB total physical RAM)
+* **Stock Linux Kernel:** Version `3.18.20-svn103289`
+* **Compilation Target env:** `Realtek MSDK-4.8.5p1 Build 2220` (GCC 4.8.5 via Ubuntu)
+
+### 2. Physical Storage Profile (128MB SPI-NAND Flash)
+* **Page / Chunk Geometry:** 2,048 bytes (2 KB pages)
+* **Erase Block Size:** 131,072 bytes (128 KB blocks)
+* **Out-of-Bounds Metadata (OOB):** 64 bytes
+* **Hardware Error Correction:** `SNAF ECC select = 1 (Hardware Enabled)`
+
+### 3. Flash Memory Partition Table (`mtdparts=spinand:`)
+```text
+- 768K  (boot)          -> Primary U-Boot Bootloader Image
+- 128K  (env)           -> Active Bootloader Environment Data Blocks
+- 128K  (env2)          -> Secondary Backup Bootloader Data Blocks
+- 24M   (config)        -> Calibrations & Device Parameter Tables (MIB layout)
+- 8M    (k0)            -> Primary Linux Kernel
+- 20M   (r0)            -> Primary Root Filesystem (SquashFS layout)
+- 8M    (k1)ro          -> Recovery Fallback Kernel
+- 20M   (r1)ro          -> Recovery Fallback Filesystem
+- 12M   (rootfs_data)   -> User Overlay Storage Space
+```
+
+### 4. Critical Discoveries from the Filesystem
+* **Web UI Framework:** Running Boa Web Server v0.94 processing `.asp` structures via binary CGI hooks mapped under `/boaform/`.
+* **Exposed Credentials:** System account structures (`/etc/passwd`) utilize disguise-clones of UID 0 (`administrator` and a custom factory operator profile named `XisMaxAdm`).
+* **SNMP Read/Write Directives:** Contains a standard read/write community validation parameter (`rwcommunity maxisadmin`).
+* **DSL/Network Blobs:** Captured raw binary signal processor images inside `/image/dsp.img`.
+
+I have the entire extracted folder safely preserved locally. Please let me know what specific drivers or files you need me to host or inspect next to help move an experimental image build forward.
+
+Thank you!
