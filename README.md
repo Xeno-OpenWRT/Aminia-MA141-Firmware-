@@ -47,4 +47,7 @@ I am making this full firmware file layout available to core developers to assis
 
 I have the entire extracted folder safely preserved locally. Please let me know what specific drivers or files you need me to host or inspect next to help move an experimental image build forward.
 
-Thank you!
+
+* Please Help Me Make a OpenWRT Firmware With This Information 
+* so That I Will Not Have To Get Stuck With This OpenWRT Capable
+* Though Non-Flashable Device, Thank You Devs.
